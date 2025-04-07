@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Teacher & Student Chat App</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="container">
+    
+    <!-- ✅ Fetch Subjects -->
+    <section id="subjects-section">
+      <h3>Fetch Teacher Subjects</h3>
+      <div class="form-group">
+        <label for="college_db">College DB:</label>
+        <input type="text" id="college_db" placeholder="Enter College DB" />
+      </div>
+      <div class="form-group">
+        <label for="teacher_code">Teacher Code:</label>
+        <input type="text" id="teacher_code" placeholder="Enter Teacher Code" />
+      </div>
+      <button id="fetch-subjects">Fetch Subjects</button>
+      <div id="subjects-list" style="margin-top: 10px;"></div>
+    </section>
+
+    <hr />
+
+    <!-- ✅ Create/Join Chatroom -->
+    <section id="chatroom-section">
+      <h3>Create or Join Chatroom</h3>
+      <div class="form-group">
+        <label for="standard">Standard:</label>
+        <input type="text" id="standard" placeholder="Enter Standard" />
+      </div>
+      <div class="form-group">
+        <label for="division">Division:</label>
+        <input type="text" id="division" placeholder="Enter Division" />
+      </div>
+      <button id="create-chatroom">Create Chatroom</button>
+      <div id="chatroom-info" style="margin-top: 10px;"></div>
+    </section>
+
+    <hr />
+
+    <!-- ✅ Chat Section -->
+    <section id="chat-section">
+      <h3>Teacher Chat Room</h3>
+      <div id="chat-box" style="height: 250px; overflow-y: auto; border: 1px solid #ccc; padding: 10px; margin-bottom: 10px;"></div>
+      <input type="text" id="message" placeholder="Type your message" />
+      <button id="send-message">Send Message</button>
+    </section>
+
+    <hr />
+
+    <!-- ✅ Student Chat Launcher -->
+    <section id="student-chat-launch">
+      <h3>Student Chat</h3>
+      <button id="student-chat-icon">Open Student Chat</button>
+    </section>
+
+    <!-- ✅ Student Chat UI -->
+    <div id="student-chat-box-wrapper" style="display: none; margin-top: 20px;">
+      <h3>Student Chat Room</h3>
+
+      <div class="form-group">
+        <label for="student_id">Student ID:</label>
+        <input type="text" id="student_id" placeholder="Enter Student ID" />
+      </div>
+
+      <div class="form-group">
+        <label for="college_db">College DB:</label>
+        <input type="text" id="college_db_student" placeholder="Enter College DB" />
+      </div>
+
+      <div class="form-group">
+        <label for="standard">Standard:</label>
+        <input type="text" id="student_standard" placeholder="Enter Standard" />
+      </div>
+
+      <div class="form-group">
+        <label for="division">Division:</label>
+        <input type="text" id="student_division" placeholder="Enter Division" />
+      </div>
+
+      <button id="join-chatroom">Join Chatroom</button>
+
+      <div id="student-chat-box" style="height: 250px; overflow-y: auto; border: 1px solid #ccc; padding: 10px; margin: 10px 0;"></div>
+      <input type="text" id="student-message-input" placeholder="Type your message" />
+      <button id="student-send-message">Send</button>
+    </div>
+  </div>
+
+  <!-- ✅ Scripts -->
+  <script src="https://cdn.socket.io/4.5.0/socket.io.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="main.js"></script> <!-- Teacher chat -->
+  <script src="studentChat.js"></script> <!-- Student chat -->
+</body>
+</html>
