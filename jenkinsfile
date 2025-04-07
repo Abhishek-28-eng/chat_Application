@@ -2,19 +2,18 @@ pipeline {
     agent any
 
     environment {
-        GIT_REPO = 'https://github.com/dgschooldevelopment/Chat_Application.git'  // Replace with your private repo
-        GIT_CREDENTIALS_ID = 'GitHubPAT'  // Jenkins Credentials ID for GitHub PAT
-        DOCKER_IMAGE_NAME = 'Chat_app_Image'  // Docker image name
-        DEPLOY_SERVER_IP = '195.35.45.44:8001'  // The Hostinger KVM Server IP
-        DEPLOY_DIR = '/var/www/chat_app'  // Directory to deploy the application
-        CONTAINER_NAME = 'chat_app_container'  // Docker container name
+        GIT_REPO = 'https://github.com/dgschooldevelopment/Chat_Application.git'  // Your GitHub repo
+        GIT_CREDENTIALS_ID = 'GitHubPAT'  // Jenkins credentials ID
+        DOCKER_IMAGE_NAME = 'chat_app_image'
+        DEPLOY_SERVER_IP = '195.35.45.44:8001'
+        DEPLOY_DIR = '/var/www/chat_app'
+        CONTAINER_NAME = 'chat_app_container'
     }
 
     stages {
         stage('Checkout Code') {
             steps {
                 script {
-                    // Clone the private Git repository using stored GitHub credentials
                     git branch: 'main', credentialsId: "${GIT_CREDENTIALS_ID}", url: "${GIT_REPO}"
                 }
             }
@@ -23,8 +22,10 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    // Build the Docker image from the Dockerfile
-                    sh "docker build -t ${DOCKER_IMAGE_NAME} ."
+                    // 👇 Build image from backend/ folder where Dockerfile exists
+                    dir('backend') {
+                        sh "docker build -t ${DOCKER_IMAGE_NAME} ."
+                    }
                 }
             }
         }
@@ -32,10 +33,9 @@ pipeline {
         stage('Stop Existing Container') {
             steps {
                 script {
-                    // Stop and remove any existing container
                     sh """
-                    docker stop ${CONTAINER_NAME} || true
-                    docker rm ${CONTAINER_NAME} || true
+                        docker stop ${CONTAINER_NAME} || true
+                        docker rm ${CONTAINER_NAME} || true
                     """
                 }
             }
@@ -44,9 +44,9 @@ pipeline {
         stage('Run New Container') {
             steps {
                 script {
-                    // Run a new Docker container with the built image
+                    // 👇 Run the container with proper port mapping
                     sh """
-                    docker run -d --name ${CONTAINER_NAME} -p 8001:8001 ${DOCKER_IMAGE_NAME}
+                        docker run -d --name ${CONTAINER_NAME} -p 8001:8001 ${DOCKER_IMAGE_NAME}
                     """
                 }
             }
