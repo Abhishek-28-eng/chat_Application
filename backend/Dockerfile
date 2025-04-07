@@ -9,4 +9,4 @@ COPY . .
 
 EXPOSE 8001
 
-CMD ["nodemon", "server.js"]
+CMD ["node", "server.js"]
