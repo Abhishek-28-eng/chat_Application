@@ -1,0 +1,55 @@
+pipeline {
+    agent any
+
+    environment {
+        GIT_REPO = 'https://github.com/dgschooldevelopment/Chat_Application.git'  // Replace with your private repo
+        GIT_CREDENTIALS_ID = 'GitHubPAT'  // Jenkins Credentials ID for GitHub PAT
+        DOCKER_IMAGE_NAME = 'Chat_app_Image'  // Docker image name
+        DEPLOY_SERVER_IP = '195.35.45.44:8001'  // The Hostinger KVM Server IP
+        DEPLOY_DIR = '/var/www/my-node-app'  // Directory to deploy the application
+        CONTAINER_NAME = 'chat_app_container'  // Docker container name
+    }
+
+    stages {
+        stage('Checkout Code') {
+            steps {
+                script {
+                    // Clone the private Git repository using stored GitHub credentials
+                    git branch: 'main', credentialsId: "${GIT_CREDENTIALS_ID}", url: "${GIT_REPO}"
+                }
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    // Build the Docker image from the Dockerfile
+                    sh "docker build -t ${DOCKER_IMAGE_NAME} ."
+                }
+            }
+        }
+
+        stage('Stop Existing Container') {
+            steps {
+                script {
+                    // Stop and remove any existing container
+                    sh """
+                    docker stop ${CONTAINER_NAME} || true
+                    docker rm ${CONTAINER_NAME} || true
+                    """
+                }
+            }
+        }
+
+        stage('Run New Container') {
+            steps {
+                script {
+                    // Run a new Docker container with the built image
+                    sh """
+                    docker run -d --name ${CONTAINER_NAME} -p 8001:8001 ${DOCKER_IMAGE_NAME}
+                    """
+                }
+            }
+        }
+    }
+}
