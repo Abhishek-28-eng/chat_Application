@@ -6,7 +6,7 @@ pipeline {
         GIT_CREDENTIALS_ID = 'GitHubPAT'  // Jenkins Credentials ID for GitHub PAT
         DOCKER_IMAGE_NAME = 'Chat_app_Image'  // Docker image name
         DEPLOY_SERVER_IP = '195.35.45.44:8001'  // The Hostinger KVM Server IP
-        DEPLOY_DIR = '/var/www/my-node-app'  // Directory to deploy the application
+        DEPLOY_DIR = '/var/www/chat_app'  // Directory to deploy the application
         CONTAINER_NAME = 'chat_app_container'  // Docker container name
     }
 
