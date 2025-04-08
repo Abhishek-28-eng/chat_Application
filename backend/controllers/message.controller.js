@@ -3,15 +3,15 @@ const getDatabaseConnection = require("../config/db");
 
 // Save a message to the database
 exports.saveMessage = async (req, res) => {
-  const { chatroom_id, sender_id, message_text } = req.body;
+  const { chatroom_id, sender_id, message_text,timeStamp } = req.body;
   const db = getDatabaseConnection(req.params.college_db);
 
   try {
     // Insert message into the database
     const [result] = await db.execute(
-      `INSERT INTO messages (chatroom_id, sender_id, message_text) 
+      `INSERT INTO messages (chatroom_id, sender_id, message_text, timestamp) 
        VALUES (?, ?, ?)`, 
-      [chatroom_id, sender_id, message_text]
+      [chatroom_id, sender_id, message_text,timeStamp]
     );
     res.status(200).json({ message: 'Message saved successfully!' });
   } catch (error) {
