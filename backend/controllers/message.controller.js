@@ -10,7 +10,7 @@ exports.saveMessage = async (req, res) => {
     // Insert message into the database
     const [result] = await db.execute(
       `INSERT INTO messages (chatroom_id, sender_id, message_text, timestamp) 
-       VALUES (?, ?, ?)`, 
+       VALUES (?, ?, ?,?)`, 
       [chatroom_id, sender_id, message_text,timeStamp]
     );
     res.status(200).json({ message: 'Message saved successfully!' });
