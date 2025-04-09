@@ -14,8 +14,8 @@ exports.sendImageMessage = async (req, res) => {
     const imageUrl = `http://195.35.45.44:8001/images/${req.file.filename}`;
 
     const sql = `
-      INSERT INTO messages (chatroom_id, sender_id, message_text, timestamp)
-      VALUES (?, ?, ?, NOW())
+      INSERT INTO messages (chatroom_id, sender_id, message_image, message_text, timestamp)
+      VALUES (?, ?, ?, ?, ?, NOW())
     `;
 
     const [result] = await db.execute(sql, [chatroom_id, sender_id, imageUrl]);
