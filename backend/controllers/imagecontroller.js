@@ -1,4 +1,4 @@
-const dbConnection = require("../config/db");
+const db = require("../config/db"); // ✅ Use the promised connection directly
 
 exports.sendImageMessage = async (req, res) => {
   try {
@@ -14,7 +14,7 @@ exports.sendImageMessage = async (req, res) => {
     const sql = `INSERT INTO ${college_db}.messages (chatroom_id, sender_id, message_text, timestamp)
                  VALUES (?, ?, ?, NOW())`;
 
-    const [result] = await dbConnection.promise().query(sql, [
+    const [result] = await db.query(sql, [
       chatroom_id,
       sender_id,
       imageUrl
