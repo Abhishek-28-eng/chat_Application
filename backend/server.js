@@ -25,6 +25,7 @@ app.use(cors());
 // 🔹 Import Routes
 const chatRoutes = require("./routes/chatRoutes");
 app.use("/api", chatRoutes);
+app.use("/images", express.static("/home/chat_app_image"));
 
 // 🔹 WebSocket Event Handling
 io.on("connection", (socket) => {

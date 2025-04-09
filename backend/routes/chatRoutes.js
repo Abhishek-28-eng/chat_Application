@@ -5,6 +5,8 @@ const teachersubjectconteroller = require("../controllers/teacher.chatrooms");
 const messageController = require('../controllers/message.controller');
 const studentsController = require("../controllers/studentController");
 const { getUserNameById } = require("../controllers/studentteacher.controller.js");
+const imagesController = require("../controllers/imagecontroller");
+const upload = require("../middleware/upload");
 
 // 🔹 Fetch subjects assigned to a teacher
 router.get("/subjects/:college_db/:teacher_code", chatController.getTeacherSubjects);
@@ -22,6 +24,8 @@ router.get('/getChatHistory/:college_db/:chatroom_id', messageController.getChat
 router.post("/:college_db/getChatroomId", studentsController.getChatroomId);
 
 router.get("/get-name/:college_db/:role/:id", getUserNameById);
+
+router.post("/send-image/:college_db", upload.single("image"), imagesController.sendImageMessage);
 
 
 module.exports = router;
