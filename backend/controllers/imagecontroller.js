@@ -2,7 +2,7 @@ const getDatabaseConnection = require("../config/db");
 
 exports.sendImageMessage = async (req, res) => {
   try {
-    const { sender_id, chatroom_id } = req.body;
+    const { sender_id, chatroom_id, message_text } = req.body;
     const college_db = req.params.college_db;
 
     if (!req.file) {
@@ -18,7 +18,7 @@ exports.sendImageMessage = async (req, res) => {
       VALUES (?, ?, ?, ?, NOW())
     `;
 
-    const [result] = await db.execute(sql, [chatroom_id, sender_id, imageUrl]);
+    const [result] = await db.execute(sql, [chatroom_id, sender_id, imageUrl, message_text]);
 
     res.status(200).json({ message: "Image sent successfully", imageUrl });
   } catch (error) {
