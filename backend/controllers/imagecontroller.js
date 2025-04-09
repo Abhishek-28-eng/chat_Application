@@ -1,4 +1,4 @@
-const db = require("../config/db"); // ✅ Use the promised connection directly
+const getDatabaseConnection = require("../config/db");
 
 exports.sendImageMessage = async (req, res) => {
   try {
@@ -9,16 +9,16 @@ exports.sendImageMessage = async (req, res) => {
       return res.status(400).json({ message: "No image uploaded." });
     }
 
-    const imageUrl = `http://195.35.45.44:8001/images/${req.file.filename}`; // public URL
+    const db = getDatabaseConnection(college_db);
 
-    const sql = `INSERT INTO ${college_db}.messages (chatroom_id, sender_id, message_text, timestamp)
-                 VALUES (?, ?, ?, NOW())`;
+    const imageUrl = `http://195.35.45.44:8001/images/${req.file.filename}`;
 
-    const [result] = await db.query(sql, [
-      chatroom_id,
-      sender_id,
-      imageUrl
-    ]);
+    const sql = `
+      INSERT INTO messages (chatroom_id, sender_id, message_text, timestamp)
+      VALUES (?, ?, ?, NOW())
+    `;
+
+    const [result] = await db.execute(sql, [chatroom_id, sender_id, imageUrl]);
 
     res.status(200).json({ message: "Image sent successfully", imageUrl });
   } catch (error) {
