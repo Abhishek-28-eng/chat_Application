@@ -9,9 +9,9 @@ exports.saveMessage = async (req, res) => {
   try {
     // Insert message into the database
     const [result] = await db.execute(
-      `INSERT INTO messages (chatroom_id, sender_id, message_text, timestamp) 
-       VALUES (?, ?, ?, ?)`, 
-      [chatroom_id, sender_id, message_text,timeStamp]
+      `INSERT INTO messages (chatroom_id, sender_id, message_text, timestamp, message_image) 
+       VALUES (?, ?, ?, ?, ?)`, 
+      [chatroom_id, sender_id, message_text,timeStamp, message_image]
     );
     res.status(200).json({ message: 'Message saved successfully!' });
   } catch (error) {
@@ -28,10 +28,22 @@ exports.getChatHistory = async (req, res) => {
   try {
     // Fetch all messages in the chatroom
     const [messages] = await db.execute(
-      `SELECT sender_id, message_text, timestamp 
-       FROM messages 
-       WHERE chatroom_id = ? 
-       ORDER BY timestamp ASC`, 
+      `SELECT 
+    m.sender_id,
+    CASE 
+        WHEN m.sender_id LIKE 'S%' THEN s.Name
+        WHEN m.sender_id LIKE 'T%' THEN t.tname
+        ELSE NULL
+    END AS sender_name,
+    m.message_text,
+    m.message_image,
+    m.timestamp
+FROM messages m
+LEFT JOIN Student s ON m.sender_id = s.studentid
+LEFT JOIN teacher t ON m.sender_id = t.teacher_code
+WHERE m.chatroom_id = ?
+ORDER BY m.timestamp ASC;
+`, 
       [chatroom_id]
     );
 
