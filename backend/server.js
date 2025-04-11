@@ -49,7 +49,7 @@ io.on("connection", (socket) => {
 
         try {
             const db = getDatabaseConnection(college_db);
-            const query = `SELECT sender_id, message_text, message_image timestamp FROM messages WHERE chatroom_id = ? ORDER BY timestamp ASC`;
+            const query = `SELECT sender_id, message_text, message_image, timestamp FROM messages WHERE chatroom_id = ? ORDER BY timestamp ASC`;
             const [rows] = await db.execute(query, [chatroomId]);
 
             // ✅ Send chat history to the new user
@@ -63,10 +63,17 @@ io.on("connection", (socket) => {
     socket.on("send_message", async (data) => {
         console.log("📨 Received message event:", data);
     
-        const { chatroom_id, sender_id, message_text, college_db = "MGVP" } = data;
-        const timestamp = new Date().toLocaleTimeString(); // ✅ Use local time format
+        const {
+            chatroom_id,
+            sender_id,
+            message_text = "",
+            message_image = null, // optional image URL
+            college_db = "MGVP"
+        } = data;
     
-        if (!chatroom_id || !sender_id || !message_text || !college_db) {
+        const timestamp = new Date().toLocaleTimeString();
+    
+        if (!chatroom_id || !sender_id || !college_db) {
             console.error("❌ Missing message data:", data);
             return;
         }
@@ -74,23 +81,29 @@ io.on("connection", (socket) => {
         try {
             const db = getDatabaseConnection(college_db);
     
-            // ✅ Save message to MySQL (timestamp stored as VARCHAR)
-            const query = `INSERT INTO messages (chatroom_id, sender_id, message_text, timestamp) VALUES (?, ?, ?, ?)`;
-            await db.execute(query, [chatroom_id, sender_id, message_text, timestamp]);
+            const query = `
+                INSERT INTO messages (chatroom_id, sender_id, message_text, message_image, timestamp)
+                VALUES (?, ?, ?, ?, ?)
+            `;
     
-            console.log("✅ Message saved:", message_text);
+            await db.execute(query, [
+                chatroom_id,
+                sender_id,
+                message_text.trim() !== "" ? message_text : null,
+                message_image,
+                timestamp
+            ]);
     
-            // ✅ Broadcast message with formatted timestamp
             const messageData = {
                 chatroom_id,
                 sender_id,
-                message_text,
-                timestamp // ✅ Use formatted time instead of Date object
+                message_text: message_text.trim() !== "" ? message_text : null,
+                message_image,
+                timestamp
             };
     
             console.log("📢 Broadcasting message:", messageData);
-    
-            io.to(chatroom_id).emit("new_message", messageData); // ✅ Broadcast message
+            io.to(chatroom_id).emit("new_message", messageData);
     
         } catch (error) {
             console.error("❌ Error saving message:", error);
