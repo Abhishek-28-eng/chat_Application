@@ -10,7 +10,6 @@ exports.sendImageMessage = async (req, res) => {
     }
 
     const db = getDatabaseConnection(college_db);
-
     const imageUrl = `http://195.35.45.44:8001/images/${req.file.filename}`;
 
     const sql = `
@@ -18,7 +17,20 @@ exports.sendImageMessage = async (req, res) => {
       VALUES (?, ?, ?, ?, NOW())
     `;
 
-    const [result] = await db.execute(sql, [chatroom_id, sender_id, imageUrl, message_text]);
+    const [result] = await db.execute(sql, [
+      chatroom_id,
+      sender_id,
+      imageUrl,
+      message_text || null  // handle optional message_text
+    ]);
+
+    // ✅ Broadcast the new image message to others in the room
+    req.io.to(chatroom_id).emit("receive_message", {
+      sender_id,
+      message_text,
+      message_image: imageUrl,
+      timestamp: new Date().toISOString()
+    });
 
     res.status(200).json({ message: "Image sent successfully", imageUrl });
   } catch (error) {

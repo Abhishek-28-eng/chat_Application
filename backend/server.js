@@ -22,6 +22,12 @@ const io = socketIo(server, {
 app.use(express.json());
 app.use(cors());
 
+// 🔹 Make io accessible in controllers
+app.use((req, res, next) => {
+    req.io = io;
+    next();
+});
+
 // 🔹 Import Routes
 const chatRoutes = require("./routes/chatRoutes");
 app.use("/api", chatRoutes);
@@ -43,7 +49,7 @@ io.on("connection", (socket) => {
 
         try {
             const db = getDatabaseConnection(college_db);
-            const query = `SELECT sender_id, message_text, timestamp FROM messages WHERE chatroom_id = ? ORDER BY timestamp ASC`;
+            const query = `SELECT sender_id, message_text, message_image timestamp FROM messages WHERE chatroom_id = ? ORDER BY timestamp ASC`;
             const [rows] = await db.execute(query, [chatroomId]);
 
             // ✅ Send chat history to the new user
